@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     ImageView whoPlays;
-
+    ImageView winningLine;
+    Button resetButton;
     State stateArray[][] = new State[arrSize][arrSize];
 
     List<WinningPosition> winningPositions = new ArrayList<>(Arrays.asList(
@@ -54,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
         stateArray[index / 3][index % 3] = state;
     }
 
+    private void endGame(){
+        this.resetButton.setVisibility(View.VISIBLE);
+        isActive = false;
+    }
     public void boardClick(View cellView) {
         int index = Integer.parseInt((String) cellView.getContentDescription());
 
@@ -64,12 +69,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (isWinner()) {
                 whoPlays.setImageResource((currPlayer == State.X) ? R.drawable.xwin : R.drawable.owin);
-
-                isActive = false;
+                endGame();
             } else {
                 if (isStalemate()) {
-                    isActive = false;
                     whoPlays.setImageResource(R.drawable.nowin);
+                    endGame();
                 } else {
                     currPlayer = (currPlayer == State.X) ? State.O : State.X;
                     whoPlays.setImageResource((currPlayer == State.X) ? R.drawable.xplay : R.drawable.oplay);
@@ -98,8 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     stateArray[winPosition.winningCoordinates[1][0]][winPosition.winningCoordinates[1][1]]
                             == stateArray[winPosition.winningCoordinates[2][0]][winPosition.winningCoordinates[2][1]]
             ) {
-                ImageView imageView = findViewById(R.id.winningLine);
-                imageView.setImageResource(winPosition.imageId);
+                winningLine.setImageResource(winPosition.imageId);
                 return true;
             }
         }
@@ -117,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
         currPlayer = State.X;
         isActive = true;
         whoPlays.setImageResource(R.drawable.xplay);
+        this.cellButtons.forEach(cellButton -> cellButton.setImageResource(R.drawable.empty));
+        this.winningLine.setImageResource(R.drawable.empty);
+        this.resetButton.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -129,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
                 .collect(Collectors.toList());
 
         whoPlays = findViewById(R.id.whoPlays);
-
-        Button resetButton = findViewById(R.id.reset);
+        winningLine = findViewById(R.id.winningLine);
+        resetButton = findViewById(R.id.reset);
 
         resetButton.setOnClickListener((view) -> reset());
 
