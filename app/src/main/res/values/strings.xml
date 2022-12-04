@@ -11,4 +11,6 @@
     <string name="cellBtn9">8</string>
     <string name="board">board</string>
     <string name="winingline">winingLine</string>
+    <string name="reset">reset</string>
+    <string name="whoPlays">whoPlays</string>
 </resources>

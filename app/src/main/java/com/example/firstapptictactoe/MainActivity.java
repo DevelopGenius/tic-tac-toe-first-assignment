@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.sql.Array;
@@ -30,18 +31,9 @@ public class MainActivity extends AppCompatActivity {
         O,
     }
 
+    ImageView whoPlays;
+
     State stateArray[][] = new State[arrSize][arrSize];
-
-
-    int[][][] winPositions = {
-            {{0, 0}, {0, 1}, {0, 2}},
-            {{1, 0}, {1, 1}, {1, 2}},
-            {{2, 0}, {2, 1}, {2, 2}},
-            {{0, 0}, {1, 0}, {2, 0}},
-            {{0, 1}, {1, 1}, {2, 1}},
-            {{0, 2}, {1, 2}, {2, 2}},
-            {{0, 0}, {1, 1}, {2, 2}},
-            {{0, 2}, {1, 1}, {2, 0}}};
 
     List<WinningPosition> winningPositions = new ArrayList<>(Arrays.asList(
             new WinningPosition(new int[][]{{0, 0}, {0, 1}, {0, 2}}, R.drawable.top_row),
@@ -62,26 +54,25 @@ public class MainActivity extends AppCompatActivity {
         stateArray[index / 3][index % 3] = state;
     }
 
-    public void boardClick(View view) {
-        int index = Integer.parseInt((String) view.getContentDescription());
+    public void boardClick(View cellView) {
+        int index = Integer.parseInt((String) cellView.getContentDescription());
 
         if (isActive && this.getCellStateFromIndex(index) == State.EMPTY) {
             setCellState(index, currPlayer);
-            ImageView imgView = (ImageView) view;
-            if (currPlayer == State.X) {
-                imgView.setImageResource(R.drawable.x);
-            } else {
-                imgView.setImageResource(R.drawable.o);
-            }
+            ImageView cellImgView = (ImageView) cellView;
+            cellImgView.setImageResource((currPlayer == State.X) ? R.drawable.x : R.drawable.o);
 
             if (isWinner()) {
+                whoPlays.setImageResource((currPlayer == State.X) ? R.drawable.xwin : R.drawable.owin);
 
                 isActive = false;
             } else {
                 if (isStalemate()) {
                     isActive = false;
+                    whoPlays.setImageResource(R.drawable.nowin);
                 } else {
                     currPlayer = (currPlayer == State.X) ? State.O : State.X;
+                    whoPlays.setImageResource((currPlayer == State.X) ? R.drawable.xplay : R.drawable.oplay);
                 }
             }
         }
@@ -116,25 +107,35 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    public void reset() {
         for (int i = 0; i < arrSize; i++) {
             for (int j = 0; j < arrSize; j++) {
                 stateArray[i][j] = State.EMPTY;
             }
         }
 
-//        winningPositions.add()
-
         currPlayer = State.X;
         isActive = true;
+        whoPlays.setImageResource(R.drawable.xplay);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         this.cellButtons = Stream.of(R.id.cellBtn1, R.id.cellBtn2, R.id.cellBtn3, R.id.cellBtn4, R.id.cellBtn5, R.id.cellBtn6, R.id.cellBtn7, R.id.cellBtn8, R.id.cellBtn9)
                 .map(id -> (ImageView) findViewById(id))
                 .collect(Collectors.toList());
 
+        whoPlays = findViewById(R.id.whoPlays);
+
+        Button resetButton = findViewById(R.id.reset);
+
+        resetButton.setOnClickListener((view) -> reset());
+
         this.cellButtons.forEach((cellButton) -> cellButton.setOnClickListener(this::boardClick));
+
+        reset();
     }
 }
