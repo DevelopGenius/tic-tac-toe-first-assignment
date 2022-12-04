@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">FirstAppTicTacToe</string>
+    <string name="cellBtn1">0</string>
+    <string name="cellBtn2">1</string>
+    <string name="cellBtn3">2</string>
+    <string name="cellBtn4">3</string>
+    <string name="cellBtn5">4</string>
+    <string name="cellBtn6">5</string>
+    <string name="cellBtn7">6</string>
+    <string name="cellBtn8">7</string>
+    <string name="cellBtn9">8</string>
+    <string name="board">board</string>
+    <string name="winingline">winingLine</string>
 </resources>
